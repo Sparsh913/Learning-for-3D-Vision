@@ -51,7 +51,7 @@ def render_cow(
     rend = renderer(mesh, cameras=cameras, lights=lights)
     rend = rend.cpu().numpy()[0, ..., :3]  # (B, H, W, 4) -> (H, W, 3)
     # The .cpu moves the tensor to GPU (if needed).
-    return rend
+    return rend, mesh, cameras, lights
 
 
 if __name__ == "__main__":

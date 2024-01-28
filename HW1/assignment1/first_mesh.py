@@ -5,6 +5,8 @@ import pytorch3d
 import pytorch3d.io
 from starter.utils import *
 from pytorch3d.io import load_obj
+from pytorch3d.vis.plotly_vis import plot_scene
+# from starter.render_mesh import render_cow
 
 # device = torch.device("cpu")
 device = get_device()
@@ -60,7 +62,14 @@ rend = renderer(device = device, meshes_world=mesh, cameras=cameras, lights=ligh
 print("rend device: ", rend.device)
 print("rend shape: ", rend.shape)
 rend = rend.to(torch.device("cpu"))
-img = rend[0, ..., :3].numpy()
-cv2.imshow("img", img)
-cv2.waitKey(0)
-cv2.destroyAllWindows()
+
+plot_scene({
+    "figure": {
+        "Mesh": mesh,
+        "Camera": cameras,
+    }
+})
+# img = rend[0, ..., :3].numpy()
+# cv2.imshow("img", img)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
