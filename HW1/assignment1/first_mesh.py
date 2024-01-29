@@ -69,7 +69,7 @@ plot_scene({
         "Camera": cameras,
     }
 })
-# img = rend[0, ..., :3].numpy()
-# cv2.imshow("img", img)
-# cv2.waitKey(0)
-# cv2.destroyAllWindows()
+img = rend[0, ..., :3].numpy()
+cv2.imshow("img", img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()

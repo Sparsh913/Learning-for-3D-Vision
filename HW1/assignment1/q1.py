@@ -30,8 +30,6 @@ def q1_1(mesh, lights, num_views=12):
     # Convert this list contatining each view into a gif
     imageio.mimsave('output/cow_views.gif', images, fps=10)
     
-def q1_2():
-    
     
 
 if __name__ == "__main__":
