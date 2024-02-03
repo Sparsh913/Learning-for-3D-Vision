@@ -9,7 +9,7 @@ from pytorch3d.vis.plotly_vis import plot_scene
 from starter.render_mesh import render_cow
 import imageio
 
-def q3():
+def q3(num_views=12):
     '''
     pick 2 RGB colors, color1 and color2. We will assign the front of the cow a color 
     of color1, and the back of the cow a color of color2. The front of the cow 
@@ -25,8 +25,9 @@ def q3():
     faces = faces.unsqueeze(0)
     _, _, _, lights = render_cow()
     # view the cow from side
-    R, T = pytorch3d.renderer.look_at_view_transform(dist = 3, elev = 0, azim = -90)
-    cameras = pytorch3d.renderer.FoVPerspectiveCameras(device=device, R=R, T=T)
+    R, T = pytorch3d.renderer.look_at_view_transform(
+        dist = 3, elev = 0, azim = np.linspace(-180, 180, num_views, endpoint=False))
+    many_cameras = pytorch3d.renderer.FoVPerspectiveCameras(device=device, R=R, T=T)
     
     texture_rgb = vertices.clone()
     texture_rgb = texture_rgb.squeeze(0)
@@ -42,8 +43,8 @@ def q3():
     print("z_max: ", z_max)
     
     # Define the colors
-    color1 = torch.tensor([1.0, 0.0, 0.0], device=device)
-    color2 = torch.tensor([0.0, 0.0, 1.0], device=device)
+    color2 = torch.tensor([1.0, 0.0, 0.0], device=device)
+    color1 = torch.tensor([0.0, 0.0, 1.0], device=device)
     
     # Linear interpolation
     t = (z_coords - z_min) / (z_max - z_min)
@@ -53,7 +54,7 @@ def q3():
     print("color1 shape: ", color1.shape)
     print("color2 shape: ", color2.shape)
     
-    texture_rgb = (t)*color1 + (1-t)*color2
+    texture_rgb = (1-t)*color1 + (t)*color2
     print("texture rgb shape: ", texture_rgb.shape)
     
     # Define the textures
@@ -64,13 +65,14 @@ def q3():
     mesh = mesh.to(device)
     
     # Render
-    rend = renderer(mesh, cameras=cameras, lights=lights)
-    rend = rend.cpu().numpy()[0, ..., :3]  # (B, H, W, 4) -> (H, W, 3)
-    plt.imshow(rend)
-    plt.show()
-    # convert to uint8 and save the image
-    rend = np.uint8(rend*255)
-    imageio.imwrite('output/q3_cow_render.jpg', rend)
+    rend = renderer(mesh.extend(num_views), cameras=many_cameras, lights=lights)
+    images = [image[:,:,:3] for image in rend.cpu().numpy()]
+    
+    # each image should be uint8
+    images = [np.uint8(image*255) for image in images]
+    
+    # Convert this list contatining each view into a gif
+    imageio.mimsave('output/q3_cow_color.gif', images, fps=10)
     
     # Submission comment: The front of the cow is colored red and the back of the cow is colored blue.
     
