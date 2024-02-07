@@ -134,7 +134,7 @@ def construct_pcd(img, mask, depth, camera, path_pcd, num_views=12, path_out=Non
     images = render_bridge(point_cloud_path=path_pcd, image_size=256, cameras=cameras)
     
     # Save gif from the images
-    imageio.mimsave(path_out, images, fps=10)
+    imageio.mimsave(path_out, images, fps=10, loop=50)
     
     return points, rgba
     
@@ -150,7 +150,7 @@ def union_pcd(points, rgb, path_pcd, num_views=12, path_out=None):
     images = render_bridge(point_cloud_path=path_pcd, image_size=256, cameras=cameras)
     
     # Save gif from the images
-    imageio.mimsave(path_out, images, fps=10)
+    imageio.mimsave(path_out, images, fps=10, loop=50)
     
 def render_torus(image_size=256, num_samples=200, device=None, num_views=12, path_out=None):
     """
@@ -189,7 +189,7 @@ def render_torus(image_size=256, num_samples=200, device=None, num_views=12, pat
     images = [np.uint8(image*255) for image in images]
     
     # Save gif from the images
-    imageio.mimsave(path_out, images, fps=10)
+    imageio.mimsave(path_out, images, fps=10, loop=50)
     
 def render_random(image_size=256, num_samples=200, device=None, num_views=12, path_out=None):
     """
@@ -228,7 +228,7 @@ def render_random(image_size=256, num_samples=200, device=None, num_views=12, pa
     images = [np.uint8(image*255) for image in images]
     
     # Save gif from the images
-    imageio.mimsave(path_out, images, fps=10)
+    imageio.mimsave(path_out, images, fps=10, loop=50)
     
 def render_torus_mesh(image_size=256, voxel_size=64, device=None, num_views=12, path_out=None):
     if device is None:
@@ -267,7 +267,7 @@ def render_torus_mesh(image_size=256, voxel_size=64, device=None, num_views=12, 
     images = [np.uint8(image*255) for image in images]
     
     # Save gif from the images
-    imageio.mimsave(path_out, images, fps=10)
+    imageio.mimsave(path_out, images, fps=10, loop=50)
     
 def render_random_mesh(image_size=256, voxel_size=64, device=None, num_views=12, path_out=None):
     if device is None:
@@ -304,7 +304,7 @@ def render_random_mesh(image_size=256, voxel_size=64, device=None, num_views=12,
     images = [np.uint8(image*255) for image in images]
     
     # Save gif from the images
-    imageio.mimsave(path_out, images, fps=10)
+    imageio.mimsave(path_out, images, fps=10, loop=50)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

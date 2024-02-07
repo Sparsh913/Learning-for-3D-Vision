@@ -33,48 +33,47 @@ def mesh2pcd(mesh, num_samples = None):
     print("vertices shape: ", vertices.shape)
     print("faces shape: ", faces.shape)
     
-    # Convert the vertices and faces to numpy
-    vertices = vertices.cpu().numpy()
-    faces = faces.cpu().numpy()
+    mesh = pytorch3d.structures.Meshes(verts=[vertices], faces=[faces])
+    face_areas = mesh.faces_areas_packed()
+    face_areas = face_areas / face_areas.sum()
+    areas = face_areas.cpu().numpy()
     
-    # Get the areas of the faces
-    vec_cross = np.cross(vertices[faces[:, 0], :] - vertices[faces[:, 2], :],
-                       vertices[faces[:, 1], :] - vertices[faces[:, 2], :])
-    f_areas = np.sqrt(np.sum(vec_cross ** 2, 1))
-    f_areas = f_areas / np.sum(f_areas)
     
-    # Sample n points. Let's first oversample and then we'll remove redundant points
-    n_samples_per_face = np.ceil(num_samples * f_areas).astype(int)
-    floor_n = np.sum(n_samples_per_face) - num_samples
-    if floor_n > 0:
-        idx = np.where(n_samples_per_face > 0)[0]
-        floor_idx = np.random.choice(idx, floor_n, replace=True)
-        n_samples_per_face[floor_idx] -= 1
-        
-    n_samples = np.sum(n_samples_per_face)
+    # Sample a face of a triangle in the mesh with probability proportional to the area
+    # face_indices = torch.multinomial(face_areas, num_samples, replacement=True)
+    face_indices = np.random.choice(len(areas), num_samples, p=areas)
+    print("face_indices shape: ", face_indices.shape)
     
-    # Create a vector that contains the face indices
-    sample_face_idx = np.zeros((n_samples, ), dtype=int)
-    acc = 0
-    for face_idx, _n_sample in enumerate(n_samples_per_face):
-        sample_face_idx[acc: acc + _n_sample] = face_idx
-        acc += _n_sample
-        
-    r = np.random.rand(n_samples, 2)
-    A = vertices[faces[sample_face_idx, 0], :]
-    B = vertices[faces[sample_face_idx, 1], :]
-    C = vertices[faces[sample_face_idx, 2], :]
-    P = (1 - np.sqrt(r[:,0:1])) * A + np.sqrt(r[:,0:1]) * (1 - r[:,1:]) * B + \
-        np.sqrt(r[:,0:1]) * r[:,1:] * C
-        
+    # Sample a random barycentric coordinate uniformly
+    u = torch.rand(num_samples, 1).to(get_device())
+    
+    # Find the corresponding point using barycentric coordinates on the selected face
+    # Get the vertices of the selected faces
+    v0 = vertices[faces[face_indices, 0],]
+    v1 = vertices[faces[face_indices, 1],]
+    v2 = vertices[faces[face_indices, 2],]
+    print("v0 shape: ", v0.shape)
+    
+    # Number of points to sample on each face -> corresponding to the area of the face
+    # n_points_per_face = torch.ceil(face_areas * num_samples).int()
+    # print("n_points_per_face shape: ", n_points_per_face.shape)
+    # print("total points: ", n_points_per_face.sum())
+    
+    # Sample the points using the barycentric coordinates
+    # For two random variables r1,r2 uniformly distributed from 0 to 1, 
+    # we sample a new point d
+    # d = (1 - sqrt(r1)) * v0 + sqrt(r1) * (1 - r2) * v1 + sqrt(r1) * r2 * v2
+    r1 = torch.rand(num_samples, 1).to(get_device())
+    r2 = torch.rand(num_samples, 1).to(get_device())
+    P = (1 - torch.sqrt(r1)) * v0 + torch.sqrt(r1) * (1 - r2) * v1 + torch.sqrt(r1) * r2 * v2
+    # P = v0 *r1 + v1 * r2 + v2 * (1 - r1 - r2)
     print("P shape: ", P.shape)
-    # Convert the numpy array to a pytorch tensor
-    P = torch.tensor(P, dtype=torch.float32)
+    
     features = torch.ones_like(P)
     point_cloud = pytorch3d.structures.Pointclouds(points=P.unsqueeze(0), features=features.unsqueeze(0))
     point_cloud = point_cloud.to(get_device())
     R, T = pytorch3d.renderer.look_at_view_transform(
-        dist = 6, elev = 0, azim = np.linspace(-180, 180, 12, endpoint=False))
+        dist = 2, elev = 0, azim = np.linspace(-180, 180, 12, endpoint=False))
     cameras = pytorch3d.renderer.FoVPerspectiveCameras(R=R, T=T, device = get_device())
     
     rend = renderer(point_cloud.extend(12), cameras=cameras)
@@ -85,8 +84,11 @@ def mesh2pcd(mesh, num_samples = None):
     # each image should be uint8
     images = [np.uint8(image*255) for image in images]
     
-    imageio.mimsave(f"output/q7_{num_samples}.gif", images, fps=10)
+    imageio.mimsave(f"output/q7/{num_samples}.gif", images, fps=10, loop=50)
+    
 
 if __name__ == "__main__":
-    mesh = load_cow_mesh(path="data/cow.obj")
-    mesh2pcd(mesh, num_samples = 10)
+    # Load the cow mesh
+    cow_mesh = load_cow_mesh(path="data/cow.obj")
+    # Convert the cow mesh to a point cloud
+    mesh2pcd(cow_mesh, num_samples=10000)

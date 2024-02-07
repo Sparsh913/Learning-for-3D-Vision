@@ -72,7 +72,7 @@ def q3(num_views=12):
     images = [np.uint8(image*255) for image in images]
     
     # Convert this list contatining each view into a gif
-    imageio.mimsave('output/q3_cow_color.gif', images, fps=10)
+    imageio.mimsave('output/q3_cow_color.gif', images, fps=10, loop=50)
     
     # Submission comment: The front of the cow is colored red and the back of the cow is colored blue.
     

@@ -51,7 +51,7 @@ def render_tree(
     images = [np.uint8(image*255) for image in images]
     
     # Save gif from the images
-    imageio.mimsave(path_out, images, fps=10)
+    imageio.mimsave(path_out, images, fps=10, loop = 50)
     
 if __name__ == "__main__":
     render_tree()

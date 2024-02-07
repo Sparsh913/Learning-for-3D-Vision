@@ -96,7 +96,7 @@ def q2_2(num_views):
     images = [np.uint8(image*255) for image in images]
     
     # Convert this list contatining each view into a gif
-    imageio.mimsave('output/q2_2_cube.gif', images, fps=10)
+    imageio.mimsave('output/q2_2_cube.gif', images, fps=10, loop=50)
     
     # Submission comment: Number of vertices in the cube mesh is 8 and number of faces is 12.
     

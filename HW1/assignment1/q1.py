@@ -28,7 +28,7 @@ def q1_1(mesh, lights, num_views=12):
     # each image should be uint8
     images = [np.uint8(image*255) for image in images]
     # Convert this list contatining each view into a gif
-    imageio.mimsave('output/cow_views.gif', images, fps=10)
+    imageio.mimsave('output/cow_views.gif', images, fps=10, loop=5000)
     
     
 
