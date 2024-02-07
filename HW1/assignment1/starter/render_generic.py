@@ -42,8 +42,8 @@ def render_bridge(
         image_size=image_size, background_color=background_color
     )
     point_cloud = np.load(point_cloud_path)
-    verts = torch.Tensor(point_cloud["verts"][::50]).to(device).unsqueeze(0)
-    rgb = torch.Tensor(point_cloud["rgb"][::50]).to(device).unsqueeze(0)
+    verts = torch.Tensor(point_cloud["verts"][::1]).to(device).unsqueeze(0)
+    rgb = torch.Tensor(point_cloud["rgb"][::1]).to(device).unsqueeze(0)
     point_cloud = pytorch3d.structures.Pointclouds(points=verts, features=rgb)
     # R, T = pytorch3d.renderer.look_at_view_transform(4, 10, 0)
     # cameras = pytorch3d.renderer.FoVPerspectiveCameras(R=R, T=T, device=device)
