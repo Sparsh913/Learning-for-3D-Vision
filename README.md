@@ -1,7 +1,7 @@
 # Learning-for-3D-Vision
 
 ## Final Project
-https://drive.google.com/file/d/1GMv0Cxb5YMaOzM5HWSzk1oUKqQIdYUQY/view?usp=sharing
+https://drive.google.com/drive/folders/1NCFr0CLw_kTAMPQT1PV1VzVG1B9mP-iC?usp=sharing
 
 ## Assignment 1
 https://www.andrew.cmu.edu/course/16-825/projects/sparshg/proj1/
