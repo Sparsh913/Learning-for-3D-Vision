@@ -1,5 +1,8 @@
 # Instructions to run the entire code
 
+## Final Outputs
+https://drive.google.com/drive/folders/1ZlULgl8V4ucNqedLih_hfV3soaQFf_Qp?usp=drive_link
+
 ## Q1.1.1, Q1.1.2, Q1.1.3, Q1.1.4 have been completed in Q1/model.py
 use this command to check for test cases: python unit_test_gaussians.py
 
