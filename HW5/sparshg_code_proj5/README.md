@@ -1,5 +1,8 @@
 # Assignment 5 Point Cloud Processing
 
+## Final Outputs
+https://drive.google.com/drive/folders/1rDBrqMq9FRed5XR9d4LL2yEOjxi_E-Td?usp=sharing
+
 ## Instructions to run this code
 
 1. To train classification model of PointNet, CLI command is: python3 train.py --task cls
